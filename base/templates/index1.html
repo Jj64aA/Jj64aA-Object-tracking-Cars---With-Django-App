@@ -1,0 +1,241 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANPR</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        /* Loading animation */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading::after {
+    content: '';
+    width: 1em;
+    height: 1em;
+    border-radius: 50%;
+    border: 0.15em solid rgba(255, 255, 255, 0.3);
+    border-top-color: #fff;
+    animation: spin 0.6s linear infinite;
+    display: inline-block;
+    position: relative;
+    top: -0.1em;
+    margin-left: 0.5em;
+}
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            padding: 1em;
+        }
+        .pagination button {
+            margin: 0 5px;
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .pagination button.active {
+            background-color: #007bff;
+            color: white;
+        }
+        .navbar-item.active {
+            background-color: #007bff;
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <nav class="bg-gray-800 p-4 text-white w-full">
+        <div class="container mx-auto flex justify-between items-center">
+
+            <a href="login.html" id="navbar-logo" class="flex items-center navbar-item">
+               <span class="text-lg font-bold">ANPR</span>
+            </a>
+            <div>
+               <a href="{% url "home" %}" class="navbar-item px-3 py-2 hover:bg-gray-700 rounded active">Home</a>
+               <a href="#" class="navbar-item px-3 py-2 hover:bg-gray-700 rounded">Upload</a>
+               <a href="{% url "test" %}" class="navbar-item px-3 py-2 hover:bg-gray-700 rounded">Test</a>
+               <a href="{% url "contact" %}" class="navbar-item px-3 py-2 hover:bg-gray-700 rounded">Contact</a>
+               <a href="#" class="navbar-item px-3 py-2  hover:bg-indigo-700 bg-green-500 rounded">Login</a>
+           </div>
+        </div>
+    </nav>
+
+
+    <div class="flex flex-col items-center justify-center p-5 container mx-auto mt-4">
+
+        <form id="upload-form" method="POST"  action="" enctype="multipart/form-data" class="grid w-full">
+            {% csrf_token %}
+            <div class="flex items-center justify-center w-full mb-4">
+  
+                <label for="dropzone-file" class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
+                 
+                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                       
+                        <svg class="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
+                        </svg>
+                        
+                        <p class="mb-2 text-sm text-gray-500 dark:text-gray-400"><span class="font-semibold">Click to upload</span> or drag and drop</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">MP4 (max size 10 MB)</p>
+                    </div>
+                 
+                    <input name="video" id="dropzone-file" type="file" class="hidden" accept="video/mp4" />
+                </label>
+            </div>
+        
+            
+            <div id="progress-container" class="hidden w-full bg-gray-200 rounded-full h-4 dark:bg-gray-700 mb-4">
+                <div id="progress-bar" class="bg-blue-600 h-4 rounded-full" style="width: 0%;"></div>
+            </div>
+
+            <div class="flex space-x-4 mb-4 justify-center w-full">
+                <button id="submit-button" type="submit"  class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700">Submit</button>
+            </div>
+        </form>
+        <div class="flex space-x-4 mb-4">
+            <button id="reload-button" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700">Reload/Remove MP4</button>
+        </div>
+           <!-- Table -->
+        <div class="overflow-x-auto w-full">
+            {% if last_data %}
+            <p class="text-green-500 font-semibold py-2">Last Data exists and has {{ last_data|length }} items</p>
+            {% else %}
+            <p class="text-red-500 font-semibold py-2">Last Data is empty</p>
+            {% endif %}
+            <table id="car-table" class="min-w-full bg-white">
+                <thead class="bg-gray-800 text-white">
+                    <tr>
+                        <th class="w-1/3 py-3 px-4 uppercase font-semibold text-sm">Car id</th>
+                        <th class="w-1/3 py-3 px-4 uppercase font-semibold text-sm">Car Speed</th>
+                        <th class="w-1/3 py-3 px-4 uppercase font-semibold text-sm">License Plate</th>
+                    </tr>
+                </thead>
+                
+                <tbody id="table-body" class="text-gray-700">
+                    {% for car in last_data %}
+                    <tr>
+                        <td class="w-1/3 py-3 px-4">{{ car.car_id }}</td>
+                        <td class="w-1/3 py-3 px-4">{{ car.car_speed }}</td>
+                        <td class="w-1/3 py-3 px-4">{{ car.license_plate }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Download CSV Button -->
+        <div class="mt-4">
+            <button id="download-csv-button" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700">Download CSV</button>
+        </div>
+    </div>
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-4">
+      <div class="container mx-auto text-center">
+          &copy; 2024 ANPR. All rights reserved.
+      </div>
+   </footer>
+    <!-- Tailwind CSS and JavaScript -->
+
+<script>
+
+
+
+
+
+    document.getElementById('dropzone-file').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '/upload', true);  // Replace with your upload URL
+            xhr.upload.addEventListener('progress', function(e) {
+                if (e.lengthComputable) {
+                    const percentComplete = (e.loaded / e.total) * 100;
+                    const progressBar = document.getElementById('progress-bar');
+                    progressBar.style.width = percentComplete + '%';
+                }
+            }, false);
+            xhr.addEventListener('load', function() {
+                if (xhr.status === 200) {
+                    alert('Upload complete');
+                } else {
+                    alert('Upload failed');
+                }
+            });
+            const formData = new FormData();
+            formData.append('file', file);
+            xhr.send(formData);
+
+            // Show the progress bar
+            document.getElementById('progress-container').classList.remove('hidden');
+        }
+    });
+
+    document.getElementById('submit-button').addEventListener('click', function() {
+        alert('Submit button clicked!');
+        // Add your submit logic here
+    });
+
+    document.getElementById('reload-button').addEventListener('click', function() {
+        document.getElementById('dropzone-file').value = ''; // Clear the file input
+        document.getElementById('progress-container').classList.add('hidden'); // Hide the progress bar
+        document.getElementById('progress-bar').style.width = '0%'; // Reset the progress bar
+    });
+
+    document.getElementById('download-csv-button').addEventListener('click', function() {
+        let csvContent = 'Car_id,Car_speed,License_plate\n';
+        // Assuming last_data contains the car data
+        {% for car in last_data %}
+        csvContent += '{{ car.car_id }},{{ car.car_speed }},{{ car.license_plate }}\n';
+        {% endfor %}
+    
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.setAttribute('download', 'car_data.csv');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    });
+    
+
+    function activateNavbarItem() {
+        const navbarItems = document.querySelectorAll('.navbar-item');
+        navbarItems.forEach(item => {
+            item.addEventListener('click', function() {
+                navbarItems.forEach(nav => nav.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    }
+
+    // Initial table setup
+    displayTablePage(currentPage);
+    setupPagination();
+    activateNavbarItem();
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const submitButton = document.getElementById('submit-button');
+        const form = document.getElementById('upload-form');
+
+        submitButton.addEventListener('click', function() {
+            // Add loading class to the button
+            submitButton.classList.add('loading');
+
+            // Disable the button to prevent multiple clicks
+            submitButton.disabled = true;
+
+            // Submit the form
+            form.submit();
+        });
+    });
+</script>
+
+</body>
+</html>

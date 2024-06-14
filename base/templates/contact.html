@@ -1,0 +1,87 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Page</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .navbar-item.active {
+            background-color: #007bff;
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex flex-col min-h-screen">
+    <!-- Navbar -->
+    <nav class="bg-gray-800 p-4 text-white w-full">
+        <div class="container mx-auto flex justify-between items-center">
+            <!-- Logo -->
+            <a href="login.html" id="navbar-logo" class="flex items-center ">
+               <span class="text-lg font-bold">ASPR</span>
+            </a>
+            <div>
+                <a href="{% url "home" %}" class="navbar-item px-3 py-2 hover:bg-gray-700 rounded ">Home</a>
+                <a href="#" class="navbar-item px-3 py-2 hover:bg-gray-700 rounded">Upload</a>
+                <a href="{% url "test" %}" class="navbar-item px-3 py-2 hover:bg-gray-700 rounded">Test</a>
+                <a href="{% url "contact" %}" class="navbar-item px-3 py-2 hover:bg-gray-700 rounded active">Contact</a>
+                <a href="#" class="navbar-item px-3 py-2  hover:bg-indigo-700 bg-green-500 rounded">Login</a></div>
+        </div>
+    </nav>
+
+  
+    <div class="flex flex-col items-center justify-center p-8 container mx-auto    flex-grow">
+        <div class="flex flex-wrap md:flex-nowrap items-center w-full">
+            <!-- Contact form -->
+            <div class="bg-white p-8 rounded-lg shadow-lg w-full md:w-1/2 lg:w-2/5">
+
+                <h2 class="text-2xl font-bold mb-6 text-gray-800 text-center">Contact Us</h2>
+                <form action="#" method="POST">
+                    <div class="mb-4">
+                        <label for="name" class="block text-gray-700">Name</label>
+                        <input type="text" id="name" name="name" class="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="email" class="block text-gray-700">Email</label>
+                        <input type="email" id="email" name="email" class="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600" required>
+                    </div>
+                    <div class="mb-6">
+                        <label for="message" class="block text-gray-700">Message</label>
+                        <textarea id="message" name="message" class="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600" rows="5" required></textarea>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700">Send Message</button>
+                    </div>
+                </form>
+            </div>
+            <!-- Photo next to form -->
+            <div class="w-full md:w-1/2 lg:w-3/5 mt-6 md:mt-0 md:ml-6 flex justify-center">
+               <img src="{% static "img/Online%20tech%20talks-rafiki.svg" %}" alt="Contact Us Photo" class="rounded-lg">
+           </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-4">
+        <div class="container mx-auto text-center">
+            &copy; 2024 Brand. All rights reserved.
+        </div>
+    </footer>
+
+    <!-- Tailwind CSS and JavaScript -->
+    <script>
+        function activateNavbarItem() {
+            const navbarItems = document.querySelectorAll('.navbar-item');
+            navbarItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    navbarItems.forEach(nav => nav.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+        }
+
+        activateNavbarItem();
+    </script>
+</body>
+</html>

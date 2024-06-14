@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <title>All Videos</title>
+   <!-- Bootstrap CSS -->
+   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+   integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+</head>
+<body>
+   <div class="container p-5">
+      {% for x in video %}
+      <h3 class="text-center mt-2 mb-2">{{ x.name }}</h3>
+
+      <video class="embed-responsive embed-responsive-16by9" controls="controls">
+         <source src="{{ x.video.url }}" type="video/mp4" />
+      </video>
+
+      {% endfor %}
+   </div>
+</body>
+</html>

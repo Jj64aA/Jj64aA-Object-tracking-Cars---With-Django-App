@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .navbar-item.active {
+            background-color: #007bff;
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+   
+    <nav class="bg-gray-800 p-4 text-white w-full">
+        <div class="container mx-auto flex justify-between items-center">
+   
+            <a href="login.html" id="navbar-logo" class="flex items-center ">
+               <span class="text-lg font-bold">ASPR</span>
+            </a>
+            <div>
+                <a href="index.html" class="navbar-item px-3 py-2 hover:bg-gray-700 rounded">Home</a>
+                <a href="upload.html" class="navbar-item px-3 py-2 hover:bg-gray-700 rounded">Upload</a>
+                <a href="table.html" class="navbar-item px-3 py-2 hover:bg-gray-700 rounded">Table</a>
+                <a href="contact.html" class="navbar-item px-3 py-2 hover:bg-gray-700 rounded">Contact</a>
+                <a href="login.html" class="navbar-item px-3 py-2 hover:bg-gray-700 rounded active">Login</a>
+            </div>
+        </div>
+    </nav>
+
+
+    <div class="flex flex-col items-center justify-center p-5 container mx-auto mt-4">
+
+        <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+           
+            <div class="flex justify-center mb-6">
+                <img src="images/django.svg" alt="Logo" class="h-20 w-20">
+            </div>
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 text-center">Login</h2>
+            <form action="#" method="POST">
+                <div class="mb-4">
+                    <label for="email" class="block text-gray-700">Email</label>
+                    <input type="email" id="email" name="email" class="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600" required>
+                </div>
+                <div class="mb-6">
+                    <label for="password" class="block text-gray-700">Password</label>
+                    <input type="password" id="password" name="password" class="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600" required>
+                </div>
+                <div class="flex items-center justify-between">
+                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700">Login</button>
+                    <a href="#" class="text-blue-500 hover:underline">Forgot Password?</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tailwind CSS and JavaScript -->
+    <script>
+        function activateNavbarItem() {
+            const currentPath = window.location.pathname.split("/").pop();
+            const navbarItems = document.querySelectorAll('.navbar-item');
+
+            navbarItems.forEach(item => {
+                const itemPath = item.getAttribute('href');
+                if (itemPath === currentPath) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+        }
+
+        // Call function to set up the event listeners
+        activateNavbarItem();
+    </script>
+</body>
+</html>
